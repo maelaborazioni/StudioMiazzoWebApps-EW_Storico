@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/storico_tipicertificatodettaglio",
+items:[
+{foreignColumnName:"codcertificato",operator:0,primaryDataProviderID:"codcertificato",typeid:23,uuid:"55908FD9-1EDF-43C9-A30B-608B9F3C5469"}
+],
+joinType:1,
+name:"storico_tipicertificato_to_storico_tipicertificatodettaglio",
+primaryDataSource:"db:/ma_presenze/storico_tipicertificato",
+typeid:22,
+uuid:"F7DFEFCD-A755-457B-8986-BCB2C62C819E"

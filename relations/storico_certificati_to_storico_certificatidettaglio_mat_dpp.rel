@@ -1,0 +1,12 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/storico_certificatidettaglio",
+items:[
+{foreignColumnName:"idstoricocertificato",operator:0,primaryDataProviderID:"idstoricocertificato",typeid:23,uuid:"97A87FE5-8530-4A9D-AEB1-89DF8908AFCB"},
+{foreignColumnName:"idstoricotipocertificatodettaglio",operator:0,primaryDataProviderID:"globals.TIPO_CERT_DETT_MAT_DPP",typeid:23,uuid:"AE643296-AA87-4F26-A168-F15D97522A2D"}
+],
+joinType:1,
+name:"storico_certificati_to_storico_certificatidettaglio_mat_dpp",
+primaryDataSource:"db:/ma_presenze/storico_certificati",
+typeid:22,
+uuid:"C23C0781-3A38-446D-B2F2-31D8AE9D2DEF"

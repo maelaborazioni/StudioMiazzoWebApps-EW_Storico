@@ -1,0 +1,10 @@
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/telematici_certificati",
+items:[
+{foreignColumnName:"idtelematicocertificato",primaryDataProviderID:"idtelematicocertificato",typeid:23,uuid:"BCFF121C-CF63-4E2C-B110-34988F6DB1C1"}
+],
+joinType:1,
+name:"storico_certificati_legamitelematici_to_telematici_certificati",
+primaryDataSource:"db:/ma_presenze/storico_certificati_legamitelematici",
+typeid:22,
+uuid:"ED236627-95A1-4B7D-8A65-816D7BBF4939"

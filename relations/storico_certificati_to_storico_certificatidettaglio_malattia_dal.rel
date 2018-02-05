@@ -1,0 +1,12 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/storico_certificatidettaglio",
+items:[
+{foreignColumnName:"idstoricotipocertificatodettaglio",operator:0,primaryDataProviderID:"globals.TIPO_CERT_DETT_MAL_DAL",typeid:23,uuid:"7527F28B-6598-445A-B2C0-05BF19938D3C"},
+{foreignColumnName:"idstoricocertificato",operator:0,primaryDataProviderID:"idstoricocertificato",typeid:23,uuid:"E41A62A5-C43A-4459-ABFA-0CE857B4A7C6"}
+],
+joinType:1,
+name:"storico_certificati_to_storico_certificatidettaglio_malattia_dal",
+primaryDataSource:"db:/ma_presenze/storico_certificati",
+typeid:22,
+uuid:"3DF0B237-1E0D-49F3-A248-E82EFFC11A03"

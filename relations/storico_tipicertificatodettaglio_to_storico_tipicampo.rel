@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/storico_tipicampo",
+items:[
+{foreignColumnName:"idstoricotipocampo",operator:0,primaryDataProviderID:"idtipocampo",typeid:23,uuid:"E4332CE5-1A4C-40D9-8CAC-9EDDAF55DF7E"}
+],
+joinType:1,
+name:"storico_tipicertificatodettaglio_to_storico_tipicampo",
+primaryDataSource:"db:/ma_presenze/storico_tipicertificatodettaglio",
+typeid:22,
+uuid:"EF1F4439-F064-4256-BC3C-E280351420E8"

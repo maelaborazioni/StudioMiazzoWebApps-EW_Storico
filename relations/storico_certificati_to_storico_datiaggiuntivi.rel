@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:true,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/storico_datiaggiuntivi",
+items:[
+{foreignColumnName:"idstoricocertificato",operator:0,primaryDataProviderID:"idstoricocertificato",typeid:23,uuid:"B67A8929-3FEC-475D-B669-5F3953F9DB0E"}
+],
+joinType:1,
+name:"storico_certificati_to_storico_datiaggiuntivi",
+primaryDataSource:"db:/ma_presenze/storico_certificati",
+typeid:22,
+uuid:"22ADA50A-F962-4EB3-A12C-7A408A14A14C"

@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/storico_certificatidettaglio",
+items:[
+{foreignColumnName:"idstoricocertificato",operator:0,primaryDataProviderID:"idstoricocertificato",typeid:23,uuid:"568784E3-A3C7-40D2-B09F-1B1F3DF03AA5"}
+],
+joinType:1,
+name:"storico_certificati_to_storico_certificatidettaglio",
+primaryDataSource:"db:/ma_presenze/storico_certificati",
+typeid:22,
+uuid:"FCA47439-719B-4AF2-9DC2-27140D3FCB2A"

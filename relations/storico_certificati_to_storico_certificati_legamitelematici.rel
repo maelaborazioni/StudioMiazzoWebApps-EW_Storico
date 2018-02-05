@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:true,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/storico_certificati_legamitelematici",
+items:[
+{foreignColumnName:"idstoricocertificato",primaryDataProviderID:"idstoricocertificato",typeid:23,uuid:"10F3C67C-4F83-476B-9AB4-B03E23CEB7BA"}
+],
+joinType:1,
+name:"storico_certificati_to_storico_certificati_legamitelematici",
+primaryDataSource:"db:/ma_presenze/storico_certificati",
+typeid:22,
+uuid:"8FF26350-8AE5-4091-8C6B-E08892A54050"

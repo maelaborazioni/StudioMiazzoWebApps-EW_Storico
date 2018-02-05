@@ -1,0 +1,8 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/storico_datiaggiuntivi",
+joinType:1,
+name:"storico_datiaggiuntivi_to_storico_datiaggiuntivi",
+primaryDataSource:"db:/ma_presenze/storico_datiaggiuntivi",
+typeid:22,
+uuid:"8C2B9347-92D3-46E8-96BB-071CDC8B2BF5"

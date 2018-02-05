@@ -1,0 +1,8 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/storico_certificati",
+joinType:0,
+name:"storico_certificati_to_storico_certificati",
+primaryDataSource:"db:/ma_presenze/storico_certificati",
+typeid:22,
+uuid:"F5C0EEA1-8A14-45AE-9281-2167B892B4FC"

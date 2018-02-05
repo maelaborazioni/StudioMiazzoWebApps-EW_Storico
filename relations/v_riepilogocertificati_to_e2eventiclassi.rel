@@ -1,0 +1,9 @@
+foreignDataSource:"db:/ma_presenze/e2eventiclassi",
+items:[
+{foreignColumnName:"ideventoclasse",primaryDataProviderID:"ideventoclasse",typeid:23,uuid:"EC735FDC-7C4C-4306-83EF-6C15766A50B2"}
+],
+joinType:1,
+name:"v_riepilogocertificati_to_e2eventiclassi",
+primaryDataSource:"db:/ma_presenze/v_riepilogocertificati",
+typeid:22,
+uuid:"BF2A45E6-495E-446A-B7EC-2E346DAE3C7C"

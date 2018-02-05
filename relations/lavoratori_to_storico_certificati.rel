@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/storico_certificati",
+items:[
+{foreignColumnName:"idlavoratore",operator:0,primaryDataProviderID:"idlavoratore",typeid:23,uuid:"89618507-D495-4814-BC34-7CDC840AE334"}
+],
+joinType:1,
+name:"lavoratori_to_storico_certificati",
+primaryDataSource:"db:/ma_anagrafiche/lavoratori",
+typeid:22,
+uuid:"E1FB3CEB-4585-4E8C-9ECB-18CB3F1995D1"

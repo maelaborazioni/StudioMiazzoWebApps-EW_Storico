@@ -1,0 +1,9 @@
+foreignDataSource:"db:/ma_presenze/v_riepilogocertificati",
+items:[
+{foreignColumnName:"idlavoratore",primaryDataProviderID:"idlavoratore",typeid:23,uuid:"0EB0823B-EFD0-46FC-9903-7C419E915FE0"}
+],
+joinType:1,
+name:"lavoratori_to_v_riepilogocertificati",
+primaryDataSource:"db:/ma_anagrafiche/lavoratori",
+typeid:22,
+uuid:"C3479905-16BA-4F3E-929A-F3E43364C3AA"

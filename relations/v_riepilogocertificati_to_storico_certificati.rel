@@ -1,0 +1,9 @@
+foreignDataSource:"db:/ma_presenze/storico_certificati",
+items:[
+{foreignColumnName:"idstoricocertificato",primaryDataProviderID:"idstoricocertificato",typeid:23,uuid:"3C72183E-F565-4C85-932A-AD08B08D8841"}
+],
+joinType:1,
+name:"v_riepilogocertificati_to_storico_certificati",
+primaryDataSource:"db:/ma_presenze/v_riepilogocertificati",
+typeid:22,
+uuid:"F1356525-F1D5-44C9-B2CC-5A29B994511E"

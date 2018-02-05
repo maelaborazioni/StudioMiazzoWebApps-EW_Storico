@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/storico_certificati",
+items:[
+{foreignColumnName:"idstoricocertificato",operator:0,primaryDataProviderID:"idstoricoorigine",typeid:23,uuid:"2D06D9A9-4ED8-4ECB-A432-3CB3F28FE5F9"}
+],
+joinType:1,
+name:"storico_legami_to_storico_certificati",
+primaryDataSource:"db:/ma_presenze/storico_legami",
+typeid:22,
+uuid:"1565E8FD-CB2A-445E-84B5-3E0D07D8E50C"

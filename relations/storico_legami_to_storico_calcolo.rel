@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/storico_calcolo",
+items:[
+{foreignColumnName:"idstoricocalcolo",operator:0,primaryDataProviderID:"idstoricodest",typeid:23,uuid:"3AE69605-E882-451A-ACA5-EE86C63E2BD3"}
+],
+joinType:1,
+name:"storico_legami_to_storico_calcolo",
+primaryDataSource:"db:/ma_presenze/storico_legami",
+typeid:22,
+uuid:"E4DCCDCE-B250-4775-A48C-60DC12B635C4"

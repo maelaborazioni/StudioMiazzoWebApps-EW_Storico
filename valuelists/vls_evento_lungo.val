@@ -1,0 +1,10 @@
+addEmptyValue:1,
+customValues:"MALATTIA | 89\r\
+INFORTUNIO | 85\r\
+MATERNITA | 91\r\
+CONGEDO PARENTALE | 90\r\
+CONGEDO PATERNO | 130\r\
+CONGEDO MATRIMONIALE | 79",
+name:"vls_evento_lungo",
+typeid:34,
+uuid:"1A0D1A3F-85A1-40C6-B1BB-BD6FD1CE70E7"

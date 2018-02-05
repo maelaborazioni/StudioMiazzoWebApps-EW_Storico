@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/storico_datiaggiuntivi",
+items:[
+{foreignColumnName:"idlavoratore",operator:0,primaryDataProviderID:"idlavoratore",typeid:23,uuid:"A9B7567F-AAC1-4328-B3D6-273038D0F500"}
+],
+joinType:1,
+name:"lavoratori_to_storico_datiaggiuntivi",
+primaryDataSource:"db:/ma_anagrafiche/lavoratori",
+typeid:22,
+uuid:"F10B15A3-BAEF-4492-B804-9881453420B2"

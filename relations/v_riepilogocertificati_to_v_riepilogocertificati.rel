@@ -1,0 +1,8 @@
+allowCreationRelatedRecords:true,
+deleteRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/v_riepilogocertificati",
+joinType:1,
+name:"v_riepilogocertificati_to_v_riepilogocertificati",
+primaryDataSource:"db:/ma_presenze/v_riepilogocertificati",
+typeid:22,
+uuid:"3EE1EB68-7861-420A-B4B5-02D1E52D6320"
