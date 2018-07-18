@@ -685,7 +685,7 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 					break
 			}
 			
-			svuotaDettaglioCertificato();
+ 			svuotaDettaglioCertificato();
 			
 			if(addCertificato)
 				aggiungiCertificato();
@@ -729,7 +729,7 @@ function aggiungiCertificato()
  */
 function enterAddMode() {
 	var formName = vFormDettaglioCertificato;
-	/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificato>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificato>} */
 	var tipiCertificatoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO_TIPICERTIFICATO);
 	
 	// La richiesta della data padre è necessaria solamente qualora non sia visualizzato alcun riepilogo
@@ -752,7 +752,7 @@ function enterAddMode() {
 			var dataPadre = scegliDataPadre(descrizioneCampo);
 
 			// Cerca il certificato padre nella tabella dello storico, se presente
-			/** @type {JSFoundset<db:/ma_presenze/storico_certificati>} */
+			/** @type {JSFoundSet<db:/ma_presenze/storico_certificati>} */
 			var storicoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO);
 			if (storicoFs && storicoFs.find()) {
 				storicoFs.idlavoratore = vIdLavoratore;
@@ -870,7 +870,7 @@ function modificaCertificato(event)
 		return;
 	}
 	
-	/** @type{JSFoundset<db:/ma_presenze/storico_certificati>} */
+	/** @type{JSFoundSet<db:/ma_presenze/storico_certificati>} */
 	var certificatiFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_certificati');
 	if(certificatiFs && certificatiFs.find())
 	{
@@ -974,7 +974,7 @@ function abilitaBtnSalva(abilita)
  */
 function inizializzaParametriValidatoreTipoCertificato(idStoricoCertificato)
 {
-	/** @type {JSFoundset<db:/ma_presenze/storico_certificati>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_certificati>} */
 	var storicoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO);
 	if (idstoricocertificato != null && storicoFs.find())
 	{		
@@ -1197,7 +1197,7 @@ function onHide(event)
  */
 function isAutoGenerato()
 {
-	/** @type {JSFoundset<db:/ma_presenze/storico_certificati>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_certificati>} */
 	var storicoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO);
 	if(storicoFs && storicoFs.find())
 	{
@@ -1361,7 +1361,7 @@ function updateDettaglioCertificato(tipoCertificato, idStoricoCertificato, valid
 	
 	if(response === true)
 	{
-		/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificato>} */
+		/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificato>} */
 		var tipiCertificatoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_tipicertificato');
 		if(tipiCertificatoFs && tipiCertificatoFs.find())
 		{
@@ -1483,7 +1483,7 @@ function getFormDettaglioCertificato(formName, tipoCertificato, idEventoClasse, 
 	width = width || 360;
 	
 	// Recupera le informazioni relative ai campi del certificato
-	/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificatodettaglio>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificatodettaglio>} */
 	var fsTipoCertificati = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_tipicertificatodettaglio');
 	if(fsTipoCertificati && fsTipoCertificati.find())
 	{
@@ -1760,7 +1760,7 @@ function showStorico(idEventoClasse, giorno, idLavoratore, idDitta)
 function forzaInserimentoCertificatoPadreCongedo()
 {
 	// Forza l'inserimento del certificato padre		
-	/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificato>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificato>} */
 	var tipiCertificatoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO_TIPICERTIFICATO);
 	if (tipiCertificatoFs && tipiCertificatoFs.find())
 	{
@@ -1793,7 +1793,7 @@ function showDatiAggiuntivi(idLavoratore, idEventoClasse)
 	/**
 	 * In caso di congedo parentale vanno specificati alcuni dati aggiuntivi relativi al figlio per il quale si vuole richiedere il periodo di congedo
 	 */
-	/** @type {JSFoundset<db:/ma_presenze/storico_datiaggiuntivi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_datiaggiuntivi>} */
 	var fsDatiAgg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_datiaggiuntivi');
 	if(!fsDatiAgg.find())
 		throw new Error(i18n.getI18NMessage('ma.err.findmode', ['showDatiAggiuntivi']));
@@ -1835,7 +1835,7 @@ function getDatiAggiuntiviForm()
 function onDataChangeTipoCertificato(oldValue, newValue, event)
 {
 	// Cerca il tipo certificato specificato, e ripristina i dati precedenti se non esistente
-	/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificato>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificato>} */
 	var tipiCertificatoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_tipicertificato');
 		tipiCertificatoFs = FiltraCertificati(tipiCertificatoFs);
 		

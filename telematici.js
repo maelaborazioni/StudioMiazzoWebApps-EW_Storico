@@ -9,7 +9,7 @@
  */
 function isCertificatoTelematico(idStoricoCertificato)
 {
-	/** @type {JSFoundset<db:/ma_presenze/storico_certificati_legamitelematici>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_certificati_legamitelematici>} */
 	var fsLegami = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_LEGAMI_TELEMATICI);
 	if(fsLegami.find())
 	{
@@ -35,7 +35,7 @@ function isCertificatoTelematico(idStoricoCertificato)
  */
 function getCertificatoTelematico(idStoricoCertificato)
 {
-	/** @type {JSFoundset<db:/ma_presenze/storico_certificati_legamitelematici>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_certificati_legamitelematici>} */
 	var fsLegami = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_LEGAMI_TELEMATICI);
 	if(fsLegami.find())
 	{
@@ -58,7 +58,7 @@ function getCertificatoTelematico(idStoricoCertificato)
  */
 function getNumeroCertificatiTelematici(arrIdStoricoCertificato)
 {
-	/** @type {JSFoundset<db:/ma_presenze/storico_certificati_legamitelematici>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_certificati_legamitelematici>} */
 	var fsLegami = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_LEGAMI_TELEMATICI);
 	if(fsLegami.find())
 	{
@@ -77,13 +77,13 @@ function getNumeroCertificatiTelematici(arrIdStoricoCertificato)
  * 
  * @param {Number} idStoricoCertificatoPadre
  *
- * @return {JSFoundset<db:/ma_presenze/storico_certificati>}
+ * @return {JSFoundSet<db:/ma_presenze/storico_certificati>}
  * 
  * @properties={typeid:24,uuid:"5E8A4CFE-31A5-490B-8700-E416775D75A8"}
  */
 function getCertificatiFigli(idStoricoCertificatoPadre)
 {
-	/** @type {JSFoundset<db:/ma_presenze/storico_certificati>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_certificati>} */
 	var fsCertificati = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO);
 	if(fsCertificati.find())
 	{

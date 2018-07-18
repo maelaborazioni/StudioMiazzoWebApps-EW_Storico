@@ -511,7 +511,7 @@ function onFocusLost(event)
 	var elemName = event.getElementName();
 	
 	//TODO recupera dagli informativi eventi lunghi la/le operazione/i da effettuare
-	/** @type {JSFoundset<db:/ma_presenze/e2informativieventilunghi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2informativieventilunghi>} */
 	var infoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2informativieventilunghi');
 	if(infoFs.find())
 	{
@@ -712,7 +712,7 @@ function showStorico(idEventoClasse, giorno, idDipendente, idDitta, periodo)
 		winLkpSelFiglio.setInitialBounds(JSWindow.DEFAULT,JSWindow.DEFAULT,410,300)
 		winLkpSelFiglio.title = 'Selezione dati aggiuntivi congedo'
 			
-    	/** @type {JSFoundset<db:/ma_presenze/storico_datiaggiuntivi>} */
+    	/** @type {JSFoundSet<db:/ma_presenze/storico_datiaggiuntivi>} */
     	var fsDatiAgg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_datiaggiuntivi');
     	if(fsDatiAgg.find())
     	{

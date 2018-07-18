@@ -175,7 +175,7 @@ function updateDettaglioCertificato(tipoCertificato, idStoricoCertificato, valid
 	    
 	if(response === true)
 	{
-		/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificato>} */
+		/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificato>} */
 		var tipiCertificatoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_tipicertificato');
 		if(tipiCertificatoFs && tipiCertificatoFs.find())
 		{
@@ -231,7 +231,7 @@ function abilitaPulsanti(abilita)
 //	
 //	vDescrizioneCertificato = ''
 //	var _numrec = 0
-//	/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificato>} */
+//	/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificato>} */
 //	var _foundset = databaseManager.getFoundSet(globals.nav.program['LEAF_Lkp_Certificati'].server_name,
 //												globals.nav.program['LEAF_Lkp_Certificati'].table_name)
 //												
@@ -344,7 +344,7 @@ function costruisciDettaglioCertificato(tipoCertificato, idEventoClasse, idStori
 	// Se in browse/edit, popola i campi della form
 	if(idStoricoCertificato)
 	{
-		/** @type {JSFoundset<db:/ma_presenze/storico_certificati>} */
+		/** @type {JSFoundSet<db:/ma_presenze/storico_certificati>} */
 		var fsCertificato = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO);
 			fsCertificato.loadRecords(idStoricoCertificato);
 			
@@ -402,7 +402,7 @@ function costruisciDettaglioCertificato(tipoCertificato, idEventoClasse, idStori
 function getFormDettaglioCertificato(formName, tipoCertificato, idEventoClasse)
 {
 	// Recupera le informazioni relative ai campi del certificato
-	/** @type {JSFoundset<db:/ma_presenze/storico_tipicertificatodettaglio>} */
+	/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificatodettaglio>} */
 	var fsTipoCertificati = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_tipicertificatodettaglio');
 	if(fsTipoCertificati && fsTipoCertificati.find())
 	{

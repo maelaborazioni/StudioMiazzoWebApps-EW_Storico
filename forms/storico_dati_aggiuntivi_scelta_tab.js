@@ -63,7 +63,7 @@ function confermaSelezioneFiglio(event)
 	var idStoricoCertificati = dsStoricoCertificati.getValue(1,1);
 	if (idStoricoCertificati != null)
 	{
-		/** @type {JSFoundset<db:/ma_presenze/storico_certificati>} */
+		/** @type {JSFoundSet<db:/ma_presenze/storico_certificati>} */
 		var fsStoricoCertificati = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO);
 		if (fsStoricoCertificati.find())
 		{

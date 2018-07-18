@@ -20,7 +20,7 @@ function ApriGestioneStorico(periodo, idlavoratore, idditta, idEventoClasse, idS
 		winLkpSelFiglio.setInitialBounds(JSWindow.DEFAULT,JSWindow.DEFAULT,410,300)
 		winLkpSelFiglio.title = 'Selezione dati aggiuntivi congedo'
 			
-    	/** @type {JSFoundset<db:/ma_presenze/storico_datiaggiuntivi>} */
+    	/** @type {JSFoundSet<db:/ma_presenze/storico_datiaggiuntivi>} */
     	var fsDatiAgg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'storico_datiaggiuntivi');
     	if (fsDatiAgg.find())
     	{
