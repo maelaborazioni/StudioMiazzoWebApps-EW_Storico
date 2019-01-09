@@ -540,7 +540,7 @@ function inizializzaRiepilogoStorico(idEventoClasse, giorno, idLavoratore)
 	/** type {Number} */
 	var mese = globals.getMese();
 	
-	var dataSelezionata = new Date(anno ,mese - 1, giorno);;
+	var dataSelezionata = new Date(anno ,mese - 1, giorno);
 	var sql = "SELECT * FROM [dbo].[F_Sto_IDPadre] (?,?,?)";
 	
     /** type {Number} */
@@ -1710,7 +1710,7 @@ function getFieldOnFocusGainedMethod()
 function showStorico(idEventoClasse, giorno, idLavoratore, idDitta)
 {
 	var periodo = globals.getPeriodo();
-    var strIntestazione = 'Gestisci certificato';
+    var strIntestazione = 'Gestisci certificato ';
 	
 	init(idLavoratore, idDitta, periodo, idEventoClasse);
 	
@@ -1801,11 +1801,14 @@ function showDatiAggiuntivi(idLavoratore, idEventoClasse)
 	fsDatiAgg.idlavoratore = idLavoratore;
 
 	if(fsDatiAgg.search() == 0)
-		globals.ma_utl_showWarningDialog('Nessuna maternità trovata nello storico per il lavoratore.<br/> Verrà visualizzata la form per gestire l\'inserimento dei dati aggiuntivi del figlio', 'Dati aggiuntivi congedo');
+  	   globals.ma_utl_showWarningDialog('Nessuna maternità trovata nello storico per il lavoratore.<br/> Verrà visualizzata la form per gestire l\'inserimento dei dati aggiuntivi del figlio', 'Dati aggiuntivi congedo');
 	
 	var datiAggiuntivi = getDatiAggiuntiviForm().initParams(idEventoClasse, controller.getName(), continuation);
 	
-	globals.ma_utl_showFormInDialog(datiAggiuntivi.controller.getName(), 'Selezione dati aggiuntivi congedo', fsDatiAgg);
+	// ticket #14602 : ricaricare sempre la situazione dei dati aggiuntivi di un dipendente
+	datiAggiuntivi.foundset.loadRecords(fsDatiAgg);
+	
+	globals.ma_utl_showFormInDialog(datiAggiuntivi.controller.getName(), 'Selezione dati aggiuntivi congedo');
 	globals.terminator();
 }
 
