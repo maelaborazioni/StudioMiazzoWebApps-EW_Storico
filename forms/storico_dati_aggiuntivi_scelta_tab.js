@@ -161,11 +161,28 @@ function modificaDatiFiglio(event) {
 	if(frm.foundset.getSize() > 0)
 	{
 		globals.ma_utl_showFormInDialog(frmName,'Modifica i dati del figlio');
-		globals.ma_utl_setStatus('edit',frmName);
+		globals.ma_utl_setStatus(globals.Status.EDIT,frmName);
 		databaseManager.startTransaction();
 	}
 	else
 	    globals.ma_utl_showWarningDialog('Nessun record presente','Elimina i dati del figlio');
+}
+
+/**
+ * @param {Date} dataParto
+ * @param {Number} idStoricoDatiAggiuntivi
+ * 
+ * @properties={typeid:24,uuid:"581A206D-27BD-424A-A1A2-AB3A71D198B6"}
+ */
+function modificaDatiFiglioMaschera(dataParto,idStoricoDatiAggiuntivi)
+{
+	var frm = forms.storico_dati_aggiuntivi_tab_dtl;
+	var frmName = frm.controller.getName();
+	foundset.selectRecord(idStoricoDatiAggiuntivi);
+	foundset.getSelectedRecord().data = dataParto;
+	globals.ma_utl_showFormInDialog(frmName,'Modifica i dati del figlio');
+	globals.ma_utl_setStatus(globals.Status.EDIT,frmName);
+	databaseManager.startTransaction();
 }
 
 /**
@@ -175,19 +192,62 @@ function modificaDatiFiglio(event) {
  *
  * @properties={typeid:24,uuid:"DE325592-E428-4F78-8794-B4412EDA63ED"}
  */
-function aggiungiFiglio(event) {
+function aggiungiFiglio(event) 
+{
+	var dataEffettiva = getDataPartoFiglio();
 	
-	var frmName = forms.storico_dati_aggiuntivi_tab_dtl.controller.getName();
+	var fsDatiFigli = globals.getDatiAggiuntiviFigli(idlavoratore,dataEffettiva);
+	
+	// caso record figlio/figli già esistente/i
+	if(fsDatiFigli)
+	{
+		var msg = "Per la data richiesta sono già presenti dati relativi ai seguenti figli : <br/>"
+		var size = fsDatiFigli.getSize();
+		for(var f = 1; f <= size; f++)
+		{
+			var rec = fsDatiFigli.getRecord(f);
+			
+			if(!rec.cognome || !rec.nome || !rec.codicefiscale)
+			{
+				modificaDatiFiglioMaschera(dataEffettiva,rec.idstoricodatiaggiuntivi);
+				return;
+			}			
+			
+			msg += 'Nome : ' + (rec.cognome || '') + ' Cognome : ' + (rec.nome || '') + ' Nato il ' + globals.dateFormat(rec.data, globals.EU_DATEFORMAT) + ' Codice fiscale : ' + (rec.codicefiscale || '');
+			msg += '<br/><br/>';
+		}
+		msg += 'Si desidera proseguire comunque con l\'inserimento di un nuovo figlio?';
+		
+		var response = globals.ma_utl_showYesNoQuestion(msg,'Dati aggiuntivi nuovo figlio');
+		
+		if(!response)
+			return;
+	}
+	
+	var frm = forms.storico_dati_aggiuntivi_tab_dtl;
+	var frmName = frm.controller.getName();
 	var fs = forms.storico_dati_aggiuntivi_tab_dtl.foundset;
 	
 	if(fs.newRecord(false) > -1)
 	{	
+	   frm.data = dataEffettiva;	
 	   globals.ma_utl_showFormInDialog(frmName,'Inserisci i dati del nuovo figlio');
 	   globals.ma_utl_setStatus('edit',frmName);
 	   databaseManager.startTransaction();
 	}
 	else
-		globals.ma_utl_showErrorDialog('Errore nella creazione del nuovo record, si prega di riprovare','Inserimento dati nuovo figlio')
+		globals.ma_utl_showErrorDialog('Errore nella creazione del nuovo record, si prega di riprovare','Inserimento dati nuovo figlio');
+}
+
+/**
+ * @properties={typeid:24,uuid:"9A580F2F-95F9-4875-8247-5E535207C382"}
+ */
+function getDataPartoFiglio()
+{
+	var form = forms.storico_datapadre;
+	globals.ma_utl_setStatus(globals.Status.EDIT,form.controller.getName());
+	
+	return globals.ma_utl_showFormInDialog(form.controller.getName(), 'Data effettiva parto', null, true);
 }
 
 /**
@@ -207,4 +267,18 @@ function closeAndContinue(event, returnValue)
 	if(continuation && application.getApplicationType() == APPLICATION_TYPES.WEB_CLIENT)
 		continuation(returnValue);
 	
+}
+/**
+ * Callback method for when form is shown.
+ *
+ * @param {Boolean} firstShow form is shown first time after load
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"C9AEBAAF-A272-4AD5-B078-76585D04C187"}
+ */
+function onShow(firstShow, event)
+{
+	_super.onShowForm(firstShow,event);
 }

@@ -781,7 +781,8 @@ function getIdDatiAggiuntiviFromStoricoPadre(idStoricoPadre)
 /**
  * @AllowToRunInFind
  * 
- * TODO generated, please specify type and doc for the params
+ * Restituisce il nominativo a partire dai dati inseriti per il figlio
+ * 
  * @param {Number} idStoricoDatiAggiuntivi
  * 
  * @return {String}
@@ -800,4 +801,53 @@ function getNominativoFiglioDatiAggiuntivi(idStoricoDatiAggiuntivi)
 	}
 	
 	return '';
+}
+
+/**
+ * @AllowToRunInFind
+ * 
+ * Restituisce il foundset con i dati aggiuntivi relativi ai figli
+ * 
+ * @param {Number} idLavoratore
+ * @param {Date} dataEffettivaParto
+ * 
+ * @return {JSFoundset<db:/ma_presenze/storico_datiaggiuntivi>}
+ * 
+ * @properties={typeid:24,uuid:"E4697D60-D402-424A-BC97-9D382445784E"}
+ */
+function getDatiAggiuntiviFigli(idLavoratore,dataEffettivaParto)
+{
+	/** @type {JSFoundSet<db:/ma_presenze/storico_datiaggiuntivi>}*/
+	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_DATI_AGGIUNTIVI);
+	if(fs.find())
+	{
+		fs.idlavoratore = idLavoratore;
+		fs.data = globals.dateFormat(dataEffettivaParto,globals.ISO_DATEFORMAT) + '|yyyyMMdd';
+		if(fs.search())
+			return fs;
+	}
+	
+	return null;
+}
+
+/**
+ * @AllowToRunInFind
+ * 
+ * Restituisce true se il codice fiscale passato è già stato utilizzato, false altrimenti
+ * 
+ * @param {String} codiceFiscale
+ *
+ * @properties={typeid:24,uuid:"4289543C-4345-4815-A758-3DA1C87FCB60"}
+ */
+function isCodiceFiscaleEsistente(codiceFiscale)
+{
+	/** @type {JSFoundSet<db:/ma_presenze/storico_datiaggiuntivi>}*/
+	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_DATI_AGGIUNTIVI);
+	if(fs.find())
+	{
+		fs.codicefiscale = codiceFiscale;
+		if(fs.search())
+			return true;
+	}	
+	return false;
 }

@@ -37,14 +37,12 @@ function confermaDatiAggiuntivi(event) {
 		    return;
 		}
 
-		globals.ma_utl_setStatus('browse', controller.getName());
+		globals.ma_utl_setStatus(globals.Status.BROWSE, controller.getName());
 
 		globals.svy_mod_closeForm(event);
 
-//		globals.ma_utl_showFormInDialog(forms.storico_dati_aggiuntivi_scelta_tab.controller.getName(),
-//			'Dati aggiuntivi congedo parentale');
 	} else
-		globals.ma_utl_showWarningDialog('Controllare i valori inseriti', 'Dati aggiuntivi congedo parentale');
+		globals.ma_utl_showWarningDialog('Attenzione! Il codice fiscale inserito appartiene ad un figlio già presente negli archivi. <br/>Non è possibile proseguire con l\inserimento', 'Dati aggiuntivi congedo parentale');
 }
 
 /**
@@ -64,8 +62,6 @@ function annullaDatiAggiuntivi(event) {
 	
     globals.svy_mod_closeForm(event);
     
-//    globals.ma_utl_showFormInDialog(forms.storico_dati_aggiuntivi_scelta_tab.controller.getName(),
-//    	                            'Dati aggiuntivi congedo parentale');
 }
 
 /**
@@ -94,8 +90,7 @@ function onHide(event) {
  */
 function validaDatiAggiuntiviFiglio()
 {
-	// TODO valida i dati inseriti (occhio al codice fiscale)
-	return true;
+	return !globals.isCodiceFiscaleEsistente(codicefiscale);
 }
 /**
  * Perform the element default action.

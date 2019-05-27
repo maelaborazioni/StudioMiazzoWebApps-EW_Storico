@@ -1,3 +1,9 @@
+customProperties:"methods:{\
+onShowMethodID:{\
+arguments:null,\
+parameters:null\
+}\
+}",
 dataSource:"db:/ma_presenze/storico_datiaggiuntivi",
 extendsID:"3C076162-6D45-4034-9F27-2ADA00E4841B",
 items:[
@@ -53,14 +59,14 @@ uuid:"4B9BD3EF-5F85-4AAF-8C7F-D04963EBDE99"
 {
 anchors:3,
 formIndex:8,
-location:"341,0",
+location:"5,135",
 mediaOptions:10,
 name:"btn_new_dati_aggc",
 onActionMethodID:"DE325592-E428-4F78-8794-B4412EDA63ED",
 rolloverCursor:12,
 showClick:false,
 showFocus:false,
-size:"20,20",
+size:"30,30",
 styleClass:"btn_add",
 transparent:true,
 typeid:7,
@@ -71,7 +77,7 @@ anchors:3,
 formIndex:8,
 location:"381,0",
 mediaOptions:10,
-name:"btn_new_dati_aggcc",
+name:"btn_del_dati",
 onActionMethodID:"48846D1A-68C4-4D5E-81B1-E845A2239A93",
 rolloverCursor:12,
 showClick:false,
@@ -84,7 +90,7 @@ uuid:"CEB1358A-56EB-49B5-AACF-DF0EEC69841A"
 },
 {
 formIndex:4,
-location:"341,137",
+location:"340,135",
 mediaOptions:10,
 name:"btn_conferma_dati_agg",
 onActionMethodID:"96095A43-D008-4578-99EF-9C852BB156A0",
@@ -102,7 +108,7 @@ anchors:3,
 formIndex:8,
 location:"361,0",
 mediaOptions:10,
-name:"btn_new_dati_agg",
+name:"btn_edit_dati",
 onActionMethodID:"4B62B094-3443-4801-BED0-6295D0376191",
 rolloverCursor:12,
 showClick:false,
@@ -115,7 +121,7 @@ uuid:"DF3CFE21-FA76-4385-86C7-CA0F4CCCEA36"
 },
 {
 formIndex:5,
-location:"371,137",
+location:"370,135",
 name:"btn_annulla_dati_agg",
 onActionMethodID:"DB885996-D6B8-45BE-B1B2-3C68DA4A92A3",
 rolloverCursor:12,
@@ -130,6 +136,7 @@ uuid:"ED72A929-2E2D-4A1B-A703-F342D9CBA6A2"
 ],
 name:"storico_dati_aggiuntivi_scelta_tab",
 onHideMethodID:"-1",
+onShowMethodID:"C9AEBAAF-A272-4AD5-B078-76585D04C187",
 size:"406,170",
 styleName:"leaf_style",
 typeid:3,
