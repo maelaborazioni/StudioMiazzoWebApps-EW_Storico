@@ -1799,14 +1799,16 @@ function showDatiAggiuntivi(idLavoratore, idEventoClasse)
 		throw new Error(i18n.getI18NMessage('ma.err.findmode', ['showDatiAggiuntivi']));
 		
 	fsDatiAgg.idlavoratore = idLavoratore;
-
-	if(fsDatiAgg.search() == 0)
+    var datiAgg = fsDatiAgg.search();
+    
+	if(datiAgg == 0)
   	   globals.ma_utl_showWarningDialog('Nessuna maternità trovata nello storico per il lavoratore.<br/> Verrà visualizzata la form per gestire l\'inserimento dei dati aggiuntivi del figlio', 'Dati aggiuntivi congedo');
 	
 	var datiAggiuntivi = getDatiAggiuntiviForm().initParams(idEventoClasse, controller.getName(), continuation);
 	
 	// ticket #14602 : ricaricare sempre la situazione dei dati aggiuntivi di un dipendente
-	datiAggiuntivi.foundset.loadRecords(fsDatiAgg);
+	if(datiAgg)
+	   datiAggiuntivi.foundset.loadRecords(fsDatiAgg);
 	
 	globals.ma_utl_showFormInDialog(datiAggiuntivi.controller.getName(), 'Selezione dati aggiuntivi congedo');
 	globals.terminator();

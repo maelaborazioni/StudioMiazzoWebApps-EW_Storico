@@ -115,6 +115,7 @@ function vaiAGestioneFigli(event)
  */
 function annullaSelezioneFiglio(event)
 {
+	databaseManager.rollbackTransaction();
 	globals.svy_mod_closeForm(event);
     //closeAndContinue(event, null);
 }

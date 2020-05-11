@@ -555,17 +555,14 @@ function onFocusGainedLost(oldValue, newValue, event)
 	var arrInfoEL = [forms.storico_main.vIdEventoClasse, forms.storico_main.vCodiceCertificato, currElemName];
 	var dsInfoEL = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, sqlInfoEL, arrInfoEL, -1);
 	if (dsInfoEL.getMaxRowIndex()) {
-		//if(dsInfoEL.getValue(1,1))
 		// annotazioni
 		globals.annotazioni(currElemName, forms[frmName]['idstoricocertificato']);
-		if (dsInfoEL.getValue(1, 2) == 1)
-		{
-		    // controllo uscita
-			returnVal = globals.controlloCampo(currElemName, forms[frmName]['idstoricocertificato']);
-		    // se il controllo ha dato esito negativo esci dalla routine
-			if(!returnVal)
-		       return returnVal;	
-		}
+	    // Ticket 16933
+		// controllo uscita
+		returnVal = globals.controlloCampo(currElemName, forms[frmName]['idstoricocertificato']);
+	    // se il controllo ha dato esito negativo esci dalla routine
+		if(!returnVal)
+	       return returnVal;	
 	}
 	var arrSeqElems = forms[frmName].controller.getTabSequence();
 	var nextElemSeqIndex = arrSeqElems.indexOf(currElemName) != -1 && arrSeqElems.indexOf(currElemName) + 1 != arrSeqElems.length ? arrSeqElems.indexOf(currElemName) + 1 : null;
