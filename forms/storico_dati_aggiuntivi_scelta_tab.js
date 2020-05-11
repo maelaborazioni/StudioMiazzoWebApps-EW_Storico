@@ -115,6 +115,7 @@ function vaiAGestioneFigli(event)
  */
 function annullaSelezioneFiglio(event)
 {
+	databaseManager.rollbackTransaction();
 	globals.svy_mod_closeForm(event);
     //closeAndContinue(event, null);
 }
@@ -194,6 +195,7 @@ function modificaDatiFiglioMaschera(dataParto,idStoricoDatiAggiuntivi)
  */
 function aggiungiFiglio(event) 
 {
+	/** @type {Date} */
 	var dataEffettiva = getDataPartoFiglio();
 	
 	var fsDatiFigli = globals.getDatiAggiuntiviFigli(idlavoratore,dataEffettiva);

@@ -288,27 +288,28 @@ function confermaGestioneCertificato(tipoGiornaliera)
 		params.tipogiornaliera = tipoGiornaliera || vTipoGiornaliera;
 	
 	// verifichiamo la validità dei valori immessi : se non validi segnaliamo a video
+	/** @type{{StatusCode : Number,Message : String,FormStatus : Array<Object>,Annotazioni : String,IdStorico : Number,Chiuso : Boolean,ElencoGiorniRicalcolo : Array<Date>}} */
 	var response = globals.controllaValiditaCampi(params);
-	if (response['success']) 
+	if (response.StatusCode == globals.HTTPStatusCode.OK) 
 	{
 		response = globals.controlloRicaduta(params);
-		if(response.returnValue) 
+		if(response.StatusCode == globals.HTTPStatusCode.OK) 
 		{
-			vChiuso = response['chiuso'];
+			vChiuso = response.Chiuso;
 			
 			var answer = false;
-			if(response['message'] && params.idEventoClasse === globals.EventoClasse.INFORTUNIO)
-				answer = globals.ma_utl_showYesNoQuestion(response['message'], 'Informazioni certificato');
+			if(response.Message && params.idEventoClasse === globals.EventoClasse.INFORTUNIO)
+				answer = globals.ma_utl_showYesNoQuestion(response.Message, 'Informazioni certificato');
 			
 			var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
 
 			params   = inizializzaParametriValidatore('', idStoricoCertificato);
 			response = globals.validaCertificato(params, answer, vIdStoricoDatiAggiuntivi);
 			
-			var newIdStoricoCertificato = response;
+			var newIdStoricoCertificato = response.IdStorico;
 			if (newIdStoricoCertificato && newIdStoricoCertificato != -1) 
 			{
-				vElencoGiorniRicalcolo = response['elencogiorniricalcolo'];
+				vElencoGiorniRicalcolo = response.ElencoGiorniRicalcolo;
 					
 				/** @type {JSFoundSet<db:/ma_presenze/storico_certificatidettaglio>} */
 				var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_CERTIFICATI_DETTAGLIO);
@@ -573,7 +574,7 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 	if(idStoricoPadre)
 	{
 		// Se è presente un padre, costruisci la form di riepilogo
-		var url =  globals.WS_URL + "/Storico/CostruisciRiepilogo";
+		var url =  globals.WS_CERTIFICATE + "/Certificate32/CostruisciRiepilogo";
 		strutturaRiepilogo =
 		{
 			idditta         :   vIdDitta,
@@ -583,9 +584,14 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 			ideventoclasse	:	vIdEventoClasse,
 			tipoconnessione :   globals._tipoConnessione
 		};
-		
+		/**@type {{
+		           ReturnValue: Object,
+		           StatusCode: Number,
+		           Message: String,
+		           Recap: {IdStorico : Number, IdEventoClasse : Number, AbilitaChiusura : Boolean, AbilitaRicaduta : Number, Certificati : Array<Object>}
+		         }} */
 		var response = globals.getWebServiceResponse(url,strutturaRiepilogo);
-		if (response.returnValue && response.returnValue === true)
+		if (response.StatusCode == globals.HTTPStatusCode.OK && response.ReturnValue === true)
 		{
 			var formName = getRiepilogoFormName();
 			var tempFormName = [formName, application.getUUID()].join('_');
@@ -599,11 +605,10 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 			var dsRiepilogo = databaseManager.createEmptyDataSet(0, columns);
 			
 			// Ciclo for per popolare il dataset dall'array che è stato ritornato
-            /** @type Array */
-			var riepilogo = response['riepilogo']
-			for(var r = 0; riepilogo['Certificati'] && r < riepilogo['Certificati'].length; r++)
+            var riepilogo = response.Recap;
+			for(var r = 0; riepilogo.Certificati && r < riepilogo.Certificati.length; r++)
 			{				
-				var certificato = riepilogo['Certificati'][r];
+				var certificato = riepilogo.Certificati[r];
 				if(certificato && certificato.Padre)
 				{
 					vParentRecord = certificato['FormStatus'];
@@ -639,8 +644,6 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 	} // if (idStoricoPadre)
 	
 	var formRiepilogo = forms[elements.tab_storico_riep.getTabFormNameAt(1)];
-//		formRiepilogo.foundset.loadAllRecords();
-		
 	if(!disabled)
 	{	
 		// in caso vi sia solamente il certificato padre
@@ -924,24 +927,26 @@ function eliminaCertificato(event)
 	}
 	
 	var response = globals.eliminaCertificato(params);
-	if(response.returnValue === false || 
-			response.idstorico && response.idstorico === -1)
+	if(response && response.StatusCode == globals.HTTPStatusCode.OK)
 	{
-		svuotaDettaglioCertificato();
-		globals.svy_mod_closeForm(event);
-		globals.ma_utl_showErrorDialog(response.message,'Errore durante l\'eliminazione del certificato');
-		return;
+		if(response.ReturnValue === false || 
+				response.IdStorico && response.IdStorico === -1)
+		{
+			svuotaDettaglioCertificato();
+			globals.svy_mod_closeForm(event);
+			globals.ma_utl_showErrorDialog(response.Message,'Errore durante l\'eliminazione del certificato');
+			return;
+		}
+		if(response.IdStorico > -1)
+	    {
+	    	svuotaDettaglioCertificato();
+	    	
+	    	if(!response.IdStorico)
+	            inizializzaRiepilogo(-1,false);
+			else
+				inizializzaRiepilogo(response.IdStorico,false);
+	    }
 	}
-	if(response.idstorico > -1)
-    {
-    	svuotaDettaglioCertificato();
-    	
-    	if(!response.idstorico)
-            inizializzaRiepilogo(-1,false);
-		else
-			inizializzaRiepilogo(response.idstorico,false);
-    }
-	
 }
 
 /**
@@ -986,13 +991,16 @@ function inizializzaParametriValidatoreTipoCertificato(idStoricoCertificato)
 	
 	vParametriCertificato =
 	{
+		userid                  :   security.getUserName(), 
+		clientid                :   security.getClientID(),
+		server                  :   globals.server_db_name,
+		databasecliente         :   globals.customer_dbserver_name,
 		formstatus				:	[],
 		parentrecord			:	vParentRecord,//[],
-		iddipendenti			:	[vIdLavoratore],
 		ideventoclasse			:	vIdEventoClasse,
-		codcertificato			: 	vTipoCertificato,
+		codicecertificato			: 	vTipoCertificato,
 		periodo					:	vPeriodo,
-		iddip					:	vIdLavoratore,
+		iddipendente			:	vIdLavoratore,
 		idditta					:	vIdDitta,
 		idstorico				:	idStoricoCertificato || -1,
 		idstoricopadre			:	vIdEventoClasse === globals.EventoClasse.MALATTIA ? -1 : storicoFs.idstoricolegato || vIdStoricoPadre,
@@ -1055,15 +1063,17 @@ function inizializzaParametriValidatore(codiceCampo, idStoricoCertificato, dForm
 		
 	vParametriCertificato =
 	{		
-		iddipendenti			:	[vIdLavoratore],
+		userid                  :   security.getUserName(), 
+		clientid                :   security.getClientID(),
+		server                  :   globals.server_db_name,
+		databasecliente         :   globals.customer_dbserver_name,
+		iddipendente			:	vIdLavoratore,
 		ideventoclasse			:	vIdEventoClasse || -1,
-		codcertificato			: 	vCodiceCertificato,
-		codcampo				:	codiceCampo || '',
+		codicecertificato		: 	vCodiceCertificato,
+		codicecampo				:	codiceCampo || '',
 		formstatus				:	formStatus,
 		parentrecord			:	parentRecord,
 		periodo					:	vPeriodo,
-		tipogiornaliera 		:   forms['giorn_vista_mensile']._tipoGiornaliera || globals.TipoGiornaliera.NORMALE,
-		iddip					:	vIdLavoratore,
 		idditta					:	vIdDitta,
 		idstorico				:	idStoricoCertificato || -1,
 		idstoricopadre			:	vIdEventoClasse === globals.EventoClasse.MALATTIA ? -1 : storicoFs.idstoricolegato || vIdStoricoPadre,
@@ -1074,7 +1084,6 @@ function inizializzaParametriValidatore(codiceCampo, idStoricoCertificato, dForm
 	
 	return vParametriCertificato;
 }
-
 
 /**
  * Perform the element default action.
@@ -1089,12 +1098,13 @@ function inizializzaParametriValidatore(codiceCampo, idStoricoCertificato, dForm
 function confermaCertificati(event)
 {	
 	var params = {
-		user_id                 : security.getUserName(), 
-		client_id               : security.getClientID(),
+		userid                  : security.getUserName(), 
+		clientid                : security.getClientID(),
+		server                  : globals.server_db_name,
+		databasecliente         : globals.customer_dbserver_name,
 		iddipendenti            : [vIdLavoratore],
 		idditta                 : vIdDitta,
 		periodo                 : vPeriodo,
-		tipogiornaliera         : forms['giorn_vista_mensile']._tipoGiornaliera || globals.TipoGiornaliera.NORMALE,
 		tipoconnessione         : globals.TipoConnessione.CLIENTE,
 		ideventoclasse          : vIdEventoClasse,
 		elencogiorniricalcolo   : vElencoGiorniRicalcolo
@@ -1107,7 +1117,7 @@ function confermaCertificati(event)
 	var dsVar = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,sqlVar,arrVar,-1);
 	var variati = dsVar.getValue(1,1); 
 	
-	globals.confermaCertificati(params, vOriginaleModificato || variati);
+	scopes.storico.confermaCertificati(params, vOriginaleModificato || variati);
 	
 	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
 	vOriginaleModificato = false;
@@ -1420,7 +1430,7 @@ function costruisciDettaglioCertificato(tipoCertificato, idEventoClasse, idStori
 	// Se in browse/edit, popola i campi della form
 	if(idStoricoCertificato)
 	{
-		var fsCertificato = foundset;//databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO);
+		var fsCertificato = foundset.duplicateFoundSet();//databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.STORICO);
 			fsCertificato.loadRecords(idStoricoCertificato);
 			
 		var fsDettaglioCertificato = fsCertificato.storico_certificati_to_storico_certificatidettaglio;
@@ -1799,14 +1809,16 @@ function showDatiAggiuntivi(idLavoratore, idEventoClasse)
 		throw new Error(i18n.getI18NMessage('ma.err.findmode', ['showDatiAggiuntivi']));
 		
 	fsDatiAgg.idlavoratore = idLavoratore;
-
-	if(fsDatiAgg.search() == 0)
+    var datiAgg = fsDatiAgg.search();
+    
+	if(datiAgg == 0)
   	   globals.ma_utl_showWarningDialog('Nessuna maternità trovata nello storico per il lavoratore.<br/> Verrà visualizzata la form per gestire l\'inserimento dei dati aggiuntivi del figlio', 'Dati aggiuntivi congedo');
 	
 	var datiAggiuntivi = getDatiAggiuntiviForm().initParams(idEventoClasse, controller.getName(), continuation);
 	
 	// ticket #14602 : ricaricare sempre la situazione dei dati aggiuntivi di un dipendente
-	datiAggiuntivi.foundset.loadRecords(fsDatiAgg);
+	if(datiAgg)
+	   datiAggiuntivi.foundset.loadRecords(fsDatiAgg);
 	
 	globals.ma_utl_showFormInDialog(datiAggiuntivi.controller.getName(), 'Selezione dati aggiuntivi congedo');
 	globals.terminator();
@@ -2028,6 +2040,7 @@ function onActionInfoNumCertTelematici(event)
  */
 function onShow(firstShow, event) 
 {
+	vOriginaleModificato = false;
     plugins.busy.prepare();
 }
 
