@@ -290,19 +290,23 @@ function confermaGestioneCertificato(tipoGiornaliera)
 	// verifichiamo la validità dei valori immessi : se non validi segnaliamo a video
 	var response = globals.controllaValiditaCampi(params);
 	if (response['success']) 
-	{
-		response = globals.controlloRicaduta(params);
+	{	
 		if(response.returnValue) 
 		{
 			vChiuso = response['chiuso'];
-			
-			var answer = false;
-			if(response['message'] && params.idEventoClasse === globals.EventoClasse.INFORTUNIO)
-				answer = globals.ma_utl_showYesNoQuestion(response['message'], 'Informazioni certificato');
-			
+						
 			var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
 
 			params   = inizializzaParametriValidatore('', idStoricoCertificato);
+			
+			// controlla eventuale ricaduta infortunio
+			if(params.idEventoClasse === globals.EventoClasse.INFORTUNIO)
+			{
+				var ricaduta = globals.controlloRicaduta(params);
+				var answer = false;
+				if(ricaduta && response['message'])
+					answer = globals.ma_utl_showYesNoQuestion(response['message'], 'Informazioni certificato');
+			}
 			response = globals.validaCertificato(params, answer, vIdStoricoDatiAggiuntivi);
 			
 			var newIdStoricoCertificato = response;
@@ -585,7 +589,7 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 		};
 		
 		var response = globals.getWebServiceResponse(url,strutturaRiepilogo);
-		if (response.returnValue && response.returnValue === true)
+		if (response && response.returnValue === true)
 		{
 			var formName = getRiepilogoFormName();
 			var tempFormName = [formName, application.getUUID()].join('_');
