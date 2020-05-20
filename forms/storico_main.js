@@ -21,7 +21,7 @@ var vFormDettaglioCertificato = 'storico_cert_certif_corr_dtl';
 /**
  * @type {Number}
  * 
- * @properties={typeid:35,uuid:"A7C878FA-C18F-4406-9EAF-EA2AD17B7136",variableType:8}
+ * @properties={typeid:35,uuid:"A7C878FA-C18F-4406-9EAF-EA2AD17B7136",variableType:4}
  */
 var vIdEventoClasse = null;
 
@@ -288,59 +288,56 @@ function confermaGestioneCertificato(tipoGiornaliera)
 		params.tipogiornaliera = tipoGiornaliera || vTipoGiornaliera;
 	
 	// verifichiamo la validità dei valori immessi : se non validi segnaliamo a video
-	/** @type{{StatusCode : Number,Message : String,FormStatus : Array<Object>,Annotazioni : String,IdStorico : Number,Chiuso : Boolean,ElencoGiorniRicalcolo : Array<Date>}} */
-	var response = globals.controllaValiditaCampi(params);
-	if (response.StatusCode == globals.HTTPStatusCode.OK) 
+	var response = globals.controllaValiditaCampi(null);
+	if(response) 
 	{
-		response = globals.controlloRicaduta(params);
-		if(response.StatusCode == globals.HTTPStatusCode.OK) 
+		if(response.Message)
+		vChiuso = response.Chiuso;
+					
+		var answer = false;
+		// controlla eventuale ricaduta infortunio
+		if(params.ideventoclasse === globals.EventoClasse.INFORTUNIO)
 		{
-			vChiuso = response.Chiuso;
-			
-			var answer = false;
-			if(response.Message && params.idEventoClasse === globals.EventoClasse.INFORTUNIO)
-				answer = globals.ma_utl_showYesNoQuestion(response.Message, 'Informazioni certificato');
-			
-			var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
-
-			params   = inizializzaParametriValidatore('', idStoricoCertificato);
-			response = globals.validaCertificato(params, answer, vIdStoricoDatiAggiuntivi);
-			
-			var newIdStoricoCertificato = response.IdStorico;
-			if (newIdStoricoCertificato && newIdStoricoCertificato != -1) 
-			{
-				vElencoGiorniRicalcolo = response.ElencoGiorniRicalcolo;
-					
-				/** @type {JSFoundSet<db:/ma_presenze/storico_certificatidettaglio>} */
-				var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_CERTIFICATI_DETTAGLIO);
-			    if (fs && fs.find())
-			    {
-			    	fs.idstoricocertificato = newIdStoricoCertificato;
-			    	fs.search();
-			    	
-			    	databaseManager.refreshRecordFromDatabase(fs,-1);
-			    }
-			    
-				inizializzaRiepilogo(newIdStoricoCertificato);
-				exitEditMode();
-				
-				// prova per gestione certificati DI/CM che rimangono in edit...
-				if (forms[vFormDettaglioCertificato])
-					globals.ma_utl_setStatus(globals.Status.BROWSE,vFormDettaglioCertificato);
-					
-			}
-			else 
-			if (newIdStoricoCertificato == 0)
-			{
-				globals.ma_utl_showErrorDialog('Costruzione riepilogo certificati non riuscita, riprovare', 'Conferma certificati')
-				exitEditMode();
-			} 
-			else
-				globals.ma_utl_showErrorDialog('Errore durante il salvataggio del certificato, controllare che non ne sia presente uno avente gli stessi parametri tra quelli esistenti', 'Conferma certificati');
+			var ricaduta = globals.controlloRicaduta(params);
+			if(ricaduta && ricaduta.ReturnValue)
+				answer = globals.ma_utl_showYesNoQuestion(ricaduta.ReturnValue.toString(), 'Informazioni certificato');
 		}
-	} 
+		
+		var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
+
+		params   = inizializzaParametriValidatore('', idStoricoCertificato);
+		response = globals.validaCertificato(params, answer, vIdStoricoDatiAggiuntivi);
+		
+		var newIdStoricoCertificato = response.IdStorico;
+		if (newIdStoricoCertificato && newIdStoricoCertificato != -1) 
+		{
+			vElencoGiorniRicalcolo = response.ElencoGiorniRicalcolo;
+				
+			/** @type {JSFoundSet<db:/ma_presenze/storico_certificatidettaglio>} */
+			var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_CERTIFICATI_DETTAGLIO);
+		    if (fs && fs.find())
+		    {
+		    	fs.idstoricocertificato = newIdStoricoCertificato;
+		    	fs.search();
+		    	
+		    	databaseManager.refreshRecordFromDatabase(fs,-1);
+		    }
+		    
+			inizializzaRiepilogo(newIdStoricoCertificato);
+			exitEditMode();
+			
+			// prova per gestione certificati DI/CM che rimangono in edit...
+			if (forms[vFormDettaglioCertificato])
+				globals.ma_utl_setStatus(globals.Status.BROWSE,vFormDettaglioCertificato);
+		}
+	}
 	else
-		globals.ma_utl_showWarningDialog(response['message'], 'Conferma certificati');
+		if (newIdStoricoCertificato == 0)
+		{
+			globals.ma_utl_showErrorDialog('Costruzione riepilogo certificati non riuscita, riprovare', 'Conferma certificati')
+			exitEditMode();
+			return false;
+		} 
 	
 	return response && response.success;
 }
@@ -577,8 +574,12 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 		var url =  globals.WS_CERTIFICATE + "/Certificate32/CostruisciRiepilogo";
 		strutturaRiepilogo =
 		{
+			userid          :   security.getUserName(), 
+			clientid        :   security.getClientID(),
+			server          :   globals.server_db_name,
+			databasecliente :   globals.customer_dbserver_name,
 			idditta         :   vIdDitta,
-			iddipendenti	:	[vIdLavoratore],
+			iddipendente	:	vIdLavoratore,
 			idstorico		:	idStoricoPadre,
 			periodo			:	vPeriodo,
 			ideventoclasse	:	vIdEventoClasse,
@@ -908,6 +909,7 @@ function eliminaCertificato(event)
 		answer = globals.ma_utl_showYesNoQuestion('Eliminare il certificato di riepilogo e tutti i certificati ad esso associati?','i18n:hr.msg.attention');
     else	
 	    answer = globals.ma_utl_showYesNoQuestion('i18n:svy.fr.dlg.delete', 'i18n:hr.msg.attention');
+	answer = true;
 	
 	if(!answer)
 		return;
@@ -918,7 +920,12 @@ function eliminaCertificato(event)
 
 	var params =
 	{
+		userid          :   security.getUserName(), 
+		clientid        :   security.getClientID(),
+		server          :   globals.server_db_name,
+		databasecliente :   globals.customer_dbserver_name,
 		iddipendenti	:	[vIdLavoratore],
+		iddipendente    :   vIdLavoratore,
 		idditta			:	vIdDitta,
 		periodo			:	vPeriodo,
 		idstorico		:	idStoricoCertificato,
@@ -929,23 +936,21 @@ function eliminaCertificato(event)
 	var response = globals.eliminaCertificato(params);
 	if(response && response.StatusCode == globals.HTTPStatusCode.OK)
 	{
-		if(response.ReturnValue === false || 
-				response.IdStorico && response.IdStorico === -1)
-		{
-			svuotaDettaglioCertificato();
-			globals.svy_mod_closeForm(event);
-			globals.ma_utl_showErrorDialog(response.Message,'Errore durante l\'eliminazione del certificato');
-			return;
-		}
-		if(response.IdStorico > -1)
+		svuotaDettaglioCertificato();
+		
+		if(response.ReturnValue)
 	    {
 	    	svuotaDettaglioCertificato();
-	    	
-	    	if(!response.IdStorico)
-	            inizializzaRiepilogo(-1,false);
-			else
-				inizializzaRiepilogo(response.IdStorico,false);
+	    	inizializzaRiepilogo(response.IdStorico,false);
 	    }
+	    else
+	    	inizializzaRiepilogo(-1,false);
+	}
+	else
+	{
+		globals.svy_mod_closeForm(event);
+		globals.ma_utl_showErrorDialog(response.Message,'Errore durante l\'eliminazione del certificato');
+		return;
 	}
 }
 
@@ -995,7 +1000,7 @@ function inizializzaParametriValidatoreTipoCertificato(idStoricoCertificato)
 		clientid                :   security.getClientID(),
 		server                  :   globals.server_db_name,
 		databasecliente         :   globals.customer_dbserver_name,
-		formstatus				:	[],
+		formstatus				:	null,//[],
 		parentrecord			:	vParentRecord,//[],
 		ideventoclasse			:	vIdEventoClasse,
 		codicecertificato			: 	vTipoCertificato,
@@ -1050,7 +1055,7 @@ function inizializzaParametriValidatore(codiceCampo, idStoricoCertificato, dForm
 		{
 			/** @type {Date}*/
 			var valoreDate = valore;
-			valore = globals.dateFormat(valoreDate, dFormat || globals.ISO_DATEFORMAT ) || "";
+			valore = globals.dateFormat(valoreDate, dFormat || globals.ISO_DATEFORMAT ) || null;
 		}
 		
 	    formStatus.push(
@@ -1102,7 +1107,7 @@ function confermaCertificati(event)
 		clientid                : security.getClientID(),
 		server                  : globals.server_db_name,
 		databasecliente         : globals.customer_dbserver_name,
-		iddipendenti            : [vIdLavoratore],
+		iddipendente            : vIdLavoratore,
 		idditta                 : vIdDitta,
 		periodo                 : vPeriodo,
 		tipoconnessione         : globals.TipoConnessione.CLIENTE,
@@ -1112,11 +1117,14 @@ function confermaCertificati(event)
 
 	//se non è stata effettuata alcuna variazione su di un certificato, verifichiamo che non vi 
 	//siano certificati risultanti variati, altrimenti verrà lanciata la creazione della certificazione
-	var sqlVar = "SELECT COUNT(Variato) FROM Storico_Calcolo WHERE idLavoratore = ? AND ideventoClasse = ? AND Variato = ?";
-	var arrVar = [vIdLavoratore,vIdEventoClasse,1];
-	var dsVar = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,sqlVar,arrVar,-1);
-	var variati = dsVar.getValue(1,1); 
-	
+	if(!vOriginaleModificato)
+	{
+		// TODO verifiy if Storico_Calcolo or Storico_Certificati
+		var sqlVar = "SELECT COUNT(Variato) FROM Storico_Calcolo WHERE idLavoratore = ? AND ideventoClasse = ? AND Variato = ?";
+		var arrVar = [vIdLavoratore,vIdEventoClasse,1];
+		var dsVar = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,sqlVar,arrVar,-1);
+		var variati = dsVar.getValue(1,1); 
+	}
 	scopes.storico.confermaCertificati(params, vOriginaleModificato || variati);
 	
 	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
@@ -1528,7 +1536,6 @@ function getFormDettaglioCertificato(formName, tipoCertificato, idEventoClasse, 
 	var lblLength = 170;
 	
 	var topMargin = 0;
-//	var sideMargin = 10;//Math.floor(1/4 * tForm.width - 1/2 * fldLength);
 	var sideMargin = Math.floor(tForm.width - 2 * lblLength - 10);
 	
 	var xLLeft = sideMargin;
@@ -1679,9 +1686,10 @@ function getFormDettaglioCertificato(formName, tipoCertificato, idEventoClasse, 
 		tField.anchors = fieldAnchors;
 		
 		// Simula l'onFocusGained per la proposta del primo campo
-		if (i == 1)
-			tField.onFocusGained = getFieldOnFocusGainedMethod();
-
+//		if (i == 1)
+//			tField.onFocusGained = getFieldOnFocusGainedMethod();
+        //tField.onFocusLost = getFieldOnDataChangeMethod();
+		
 		// Simula l'onFocusLost e l'onFocusGained con l'onDataChange
 		tField.onDataChange = getFieldOnDataChangeMethod();
 	}
@@ -1694,7 +1702,7 @@ function getFormDettaglioCertificato(formName, tipoCertificato, idEventoClasse, 
  */
 function getFieldOnDataChangeMethod()
 {
-	return solutionModel.getGlobalMethod('globals','onFocusGainedLost');
+	return solutionModel.getGlobalMethod('globals','onFocusGainedLostCertificate');
 }
 
 /**
@@ -1702,7 +1710,15 @@ function getFieldOnDataChangeMethod()
  */
 function getFieldOnFocusGainedMethod()
 {
-	return solutionModel.getGlobalMethod('globals','onFocusGained');
+	return solutionModel.getGlobalMethod('globals','onFocusGainedCertificate');
+}
+
+/**
+ * @properties={typeid:24,uuid:"D69FE671-DEFB-4D9C-B636-A2D9B4E510DE"}
+ */
+function getFieldOnFocusLostMethod()
+{
+	return solutionModel.getGlobalMethod('globals','onFocusLostCertificate');
 }
 
 /**

@@ -214,7 +214,7 @@ function annotazioni(codiceCampo, idStorico, form)
 	var url = WS_CERTIFICATE + '/Validator32/Annotazioni';	
 	var response = validate(codiceCampo, idStorico, url, false, -1, form);	
 	if(response && response.StatusCode == HTTPStatusCode.OK)
-		forms[form].vAnnotazioni = response.Message;
+		forms[form].vAnnotazioni = response.Annotazioni;
 	
 }
 
@@ -230,7 +230,7 @@ function controlloCampo(codiceCampo, idStorico, form)
 	form = form || forms.storico_main.controller.getName();
 	
 	// Gestisci il controllo del campo
-	var url = WS_CERTIFICATE + '/Validator32/ControlloCampo';	
+	var url = WS_CERTIFICATE + '/Validator32/Controllo';	
 	var response = validate(codiceCampo, idStorico, url, false, forms[form].vIdStoricoDatiAggiuntivi, form);	
 	if(response && response.StatusCode == HTTPStatusCode.OK)
 	{
@@ -287,8 +287,7 @@ function annotazioniControlloPropostaCampo(codiceCampo, idStorico, form)
 		forms[form].vErrorMessage = msg; //visualizziamo il messaggio precedente nell'area riservata alle comunicazioni di errore
 		//msg == '' ? forms.storico_main.elements.btn_salva_cert.enabled = true  : forms.storico_main.elements.btn_salva_cert.enabled = false;
 		response.ReturnValue ? forms[form].elements.btn_salva_cert.enabled = true  : forms[form].elements.btn_salva_cert.enabled = false;
-		updateFormStatus(formatNullDate(response.FormStatus), vFormDettaglioCertificato);
-				
+		updateFormStatus(formatNullDate(response.FormStatus), vFormDettaglioCertificato);				
 	}
 	else
 	{
@@ -309,7 +308,7 @@ function annotazioniControlloPropostaCampo(codiceCampo, idStorico, form)
 function controlloRicaduta(params){
 	
 	// Gestisci la validazione completa del certificato
-	var url = WS_CERTIFICATE + '/Certificate32/ControlloRicaduta';	
+	var url = WS_CERTIFICATE + '/Validator32/ValidaRicaduta';	
 	
 	return getWebServiceResponse(url,params);
 }
@@ -343,7 +342,7 @@ function formatNullDate(formArray)
  * @param {Boolean} [isRicaduta]
  * @param {Number} [idStoricoDatiAggiuntivi] 
  * 
- * @return {Number} L'id dello storico salvato 
+ * @return {Object} L'id dello storico salvato 
  * 
  * @properties={typeid:24,uuid:"D76FCF7F-9556-4E07-8260-0D54AC53B9B1"}
  */
@@ -353,13 +352,13 @@ function validaCertificato(params, isRicaduta, idStoricoDatiAggiuntivi)
 	var url = WS_CERTIFICATE + '/Validator32/ValidaCertificato';
 
 	var response = validateCertificate(url, params, isRicaduta, idStoricoDatiAggiuntivi);	
-	if (response.ReturnValue === true && response.StatusCode === HTTPStatusCode.OK)
-		updateFormStatus(formatNullDate(response.FormStatus), vFormDettaglioCertificato);
+//	if (response.ReturnValue === true && response.StatusCode === HTTPStatusCode.OK)
+//		updateFormStatus(formatNullDate(response.FormStatus), vFormDettaglioCertificato);
 	
 	if(response.Message !== '')
 		globals.ma_utl_showWarningDialog(response.Message,'i18n:hr.msg.attention');
 	
-	return response.IdStorico;
+	return response;
 }
 
 /**
@@ -382,7 +381,7 @@ function validate(codiceCampo, idStoricoCertificato, url, isRicaduta, idStoricoD
 	params.idstoricodatiaggiuntivi = idStoricoDatiAggiuntivi || -1;
 	
 	/** @type {{ StatusCode : Number, ReturnValue: Boolean, Message: String, Annotazioni: String, FormStatus: Array<{ Codice: String, Valore: String }>, IdStorico: Number }} */
-	var response = globals.getWebServiceResponse(url, params);
+	var response = globals.getWebServiceCertificateResponse(url, params);
 	
 	return response;
 }
@@ -423,7 +422,7 @@ function eliminaCertificato(params)
 			    Message : String,
 			    ReturnValue : Object,
 			    IdStorico : Number}} */
-	var response = globals.getWebServiceResponse(url, params);	
+	var response = globals.getWebServiceCertificateResponse(url, params);	
 	return response;
 }
 
@@ -431,28 +430,25 @@ function eliminaCertificato(params)
  * Controlla se il certificato che si sta per inserire è compilato
  * in maniera corretta
  * 
- * @return {{StatusCode : Number,
-                Message : String,
-                FormStatus : Array<Object>,
-                Annotazioni : String,
-                IdStorico : Number,
-                Chiuso : Boolean,
-                ElencoGiorniRicalcolo : Array<Date>}}
  * @properties={typeid:24,uuid:"418DFF59-A7E1-460B-A884-40F4CF953215"}
  */
-function controllaValiditaCampi(params)
+function controllaValiditaCampi(form)
 {
-	var url = WS_CERTIFICATE + '/Validator32/ValidaControlloCampi';
-	/** @type {{StatusCode : Number,
-                Message : String,
-                FormStatus : Array<Object>,
-                Annotazioni : String,
-                IdStorico : Number,
-                Chiuso : Boolean,
-                ElencoGiorniRicalcolo : Array<Date>}} */
-	var response = globals.getWebServiceResponse(url,params);
+	form = form || forms.storico_main.controller.getName();
 	
-	return response;
+	var url = WS_CERTIFICATE + '/Validator32/ControlloCampi';
+	var response = validate(null, -1, url, false, -1, form);	
+	if(response && response.StatusCode == HTTPStatusCode.OK)
+	{
+		updateFormStatus(formatNullDate(response.FormStatus), vFormDettaglioCertificato);
+		
+		//la situazione post primo controllo è bloccante : salviamo il messaggio ritornato e ricostruiamo la form
+	    var msg = response.Message;
+	    forms[form].vErrorMessage = msg; //visualizziamo il messaggio precedente nell'area riservata alle comunicazioni di errore
+	    msg != '' ?	forms[form].elements.btn_salva_cert.enabled = false : forms[form].elements.btn_salva_cert.enabled = true;
+	}
+	
+	return response.Message == '';
 }
 
 /**
@@ -483,7 +479,7 @@ function validateCertificate(url, params, isRicaduta, idStoricoDatiAggiuntivi)
     IdStorico : Number,
     Chiuso : Boolean,
     ElencoGiorniRicalcolo : Array<Date>}} */
-	var response = globals.getWebServiceResponse(url, params);
+    var response = globals.getWebServiceCertificateResponse(url, params);
 	
 	return response;
 }
@@ -524,18 +520,21 @@ function validateTipoCertificato(idStoricoCertificato, url)
  * @properties={typeid:24,uuid:"ADBC029A-3D9F-493C-9E32-852980052C45"}
  * @AllowToRunInFind
  */
-function onFocusGained(event)
+function onFocusGainedCertificate(event)
 {
 	var returnVal = true;
 	
 	var frmName = event.getFormName();
-	var arrSeqElems = forms[frmName].controller.getTabSequence();
+	//TODO recupera il campo che è stato modificato
+	var elemName = event.getElementName();
+	//var arrSeqElems = forms[frmName].controller.getTabSequence();
 	/** @type {RuntimeForm} */
 	var mainForm     = forms[frmName].getMainForm();
 	var mainFormName = mainForm.controller.getName();
 	
-	returnVal = globals.propostaCampo(arrSeqElems[0], forms[frmName]['idstoricocertificato'], mainFormName);
-		
+//	returnVal = globals.propostaCampo(arrSeqElems[0], forms[frmName]['idstoricocertificato'], mainFormName);
+	returnVal = globals.propostaCampo(elemName, forms[frmName]['idstoricocertificato'], mainFormName);
+	
 	return returnVal;
 }
 
@@ -545,12 +544,12 @@ function onFocusGained(event)
  * @properties={typeid:24,uuid:"51C118C6-5B44-48B1-8B8E-FE6449312E92"}
  * @AllowToRunInFind
  */
-function onFocusLost(event)
+function onFocusLostCertificate(event)
 {
-	//TODO recupera il campo che è stato modificato
+	// recupera il campo che è stato modificato
 	var elemName = event.getElementName();
 	
-	//TODO recupera dagli informativi eventi lunghi la/le operazione/i da effettuare
+	// recupera dagli informativi eventi lunghi la/le operazione/i da effettuare
 	/** @type {JSFoundSet<db:/ma_presenze/e2informativieventilunghi>} */
 	var infoFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2informativieventilunghi');
 	if(infoFs.find())
@@ -560,13 +559,19 @@ function onFocusLost(event)
 		
 		if(infoFs.search())
 		{
+			// annotazioni
 			if(infoFs.solomessaggio)
-				globals.annotazioni(event.getElementName(),forms[event.getFormName()]['idstoricocertificato']);
+			   globals.annotazioni(event.getElementName(),forms[event.getFormName()]['idstoricocertificato']);
 			
+			// controllo campo
 			if(infoFs.tipocontrollo == 1)
-				return globals.controlloCampo(event.getElementName(),forms[event.getFormName()]['idstoricocertificato']);
+			{   
+				var controllo = globals.controlloCampo(event.getElementName(),forms[event.getFormName()]['idstoricocertificato']);	
+			    if(!controllo)
+			    	return controllo;
+			}
 		}
-	}
+	}	
 	
 	return true;
 }
@@ -578,7 +583,7 @@ function onFocusLost(event)
  *
  * @properties={typeid:24,uuid:"6A22F612-EAE7-433D-9E8E-F5D73ABCDB8F"}
  */
-function onFocusGainedLost(oldValue, newValue, event)
+function onFocusGainedLostCertificate(oldValue, newValue, event)
 {
 	var returnVal = true;
 	if(newValue instanceof Date && newValue['getFullYear']() < 1000)
@@ -594,9 +599,12 @@ function onFocusGainedLost(oldValue, newValue, event)
 	                  AND CodiceCertificato = ? AND applicasu = ?";
 	var arrInfoEL = [forms.storico_main.vIdEventoClasse, forms.storico_main.vCodiceCertificato, currElemName];
 	var dsInfoEL = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, sqlInfoEL, arrInfoEL, -1);
-	if (dsInfoEL.getMaxRowIndex()) {
+	if (dsInfoEL.getMaxRowIndex()) 
+	{
+		// controlla validità campi certificato
+		returnVal = globals.controllaValiditaCampi(null);
 		// annotazioni
-		globals.annotazioni(currElemName, forms[frmName]['idstoricocertificato']);
+		returnVal = globals.annotazioni(currElemName, forms[frmName]['idstoricocertificato']);
 	    // Ticket 16933
 		// controllo uscita
 		returnVal = globals.controlloCampo(currElemName, forms[frmName]['idstoricocertificato']);
@@ -604,13 +612,15 @@ function onFocusGainedLost(oldValue, newValue, event)
 		if(!returnVal)
 	       return returnVal;	
 	}
+	
+	// proposta campi successivi non ancora compilati
 	var arrSeqElems = forms[frmName].controller.getTabSequence();
 	var nextElemSeqIndex = arrSeqElems.indexOf(currElemName) != -1 && arrSeqElems.indexOf(currElemName) + 1 != arrSeqElems.length ? arrSeqElems.indexOf(currElemName) + 1 : null;
 	if (nextElemSeqIndex) {
 		var nextElemName = arrSeqElems[nextElemSeqIndex];
 		arrInfoEL = [forms.storico_main.vIdEventoClasse, forms.storico_main.vCodiceCertificato, nextElemName];
 		dsInfoEL = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, sqlInfoEL, arrInfoEL, -1);
-		if (dsInfoEL.getValue(1, 2) == 0)
+		if (dsInfoEL.getValue(1, 2) == 1)
 			returnVal = globals.propostaCampo(nextElemName, forms[frmName]['idstoricocertificato'], mainFormName);
 	}
 	
@@ -894,4 +904,20 @@ function isCodiceFiscaleEsistente(codiceFiscale)
 			return true;
 	}	
 	return false;
+}
+
+/**
+ * @param {String} url
+ * @param		   params
+ * 
+ * @return {{ StatusCode : Number, ReturnValue: Boolean, Message: String, Annotazioni: String, FormStatus: Array<{ Codice: String, Valore: String }>, IdStorico: Number }}
+ * 
+ * @properties={typeid:24,uuid:"3D1CA677-B2A9-4EC5-AB6A-085009D016F9"}
+ * @AllowToRunInFind
+ */
+function getWebServiceCertificateResponse(url, params)
+{
+	/**@type {{ StatusCode : Number, ReturnValue: Boolean, Message: String, Annotazioni: String, FormStatus: Array<{ Codice: String, Valore: String }>, IdStorico: Number }} */
+	var certResponse = getWebServiceResponseBase(url,params);
+	return certResponse;
 }

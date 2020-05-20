@@ -213,105 +213,6 @@ function abilitaPulsanti(abilita)
 	elements.btn_cert.enabled = abilita
 }
 
-
-///**
-// * Handle changed data.
-// *
-// * @param oldValue old value
-// * @param newValue new value
-// * @param {JSEvent} event the event that triggered the action
-// *
-// * @returns {Boolean}
-// *
-// * @private
-// *
-// * @properties={typeid:24,uuid:"DCCA0600-35C4-4747-A593-253407B6D8B2"}
-// */
-//function onDataChangeCertificato(oldValue, newValue, event) {
-//	
-//	vDescrizioneCertificato = ''
-//	var _numrec = 0
-//	/** @type {JSFoundSet<db:/ma_presenze/storico_tipicertificato>} */
-//	var _foundset = databaseManager.getFoundSet(globals.nav.program['LEAF_Lkp_Certificati'].server_name,
-//												globals.nav.program['LEAF_Lkp_Certificati'].table_name)
-//												
-//	_foundset.addFoundSetFilterParam('codicecertificato', '=', newValue)
-//	_foundset.addFoundSetFilterParam('ideventoclasse','=',foundset.ideventoclasse)
-//	
-//	// Controlla che esista un riepilogo in caso di infortunio o matrimoniale
-//	if(globals.EVENTO_CLASSE.infortunio === foundset.ideventoclasse || globals.EVENTO_CLASSE.matrimoniale === foundset.ideventoclasse)
-//	{
-//		var riepilogoFoundset = forms.storico_riep_cert_classico.foundset;
-//		if(!riepilogoFoundset || riepilogoFoundset.getSize() === 0)
-//		{
-//			_foundset.addFoundSetFilterParam('sceltawizard', '=', 1);
-//		}
-//		else
-//		{
-//			_foundset.addFoundSetFilterParam('sceltawizard', '=', 0);
-//		}
-//	}
-//	
-//	_foundset.loadAllRecords()
-//	
-//	if (_foundset.getSize() === 1) 
-//	{		
-//		if(vNuovoCertificato)
-//		{
-//			updateDettaglioCertificato(idstoricocertificato,undefined,-);
-//			globals.annotazioniControlloPropostaCampo('',-1);
-//			
-//			// Set the detail form in edit mode
-//			forms.storico_main.enterEditMode();
-//		}
-//		else
-//		{
-//			updateDettaglioCertificato(undefined,undefined,-);
-//		}
-//        
-//		
-//	} else {
-//		
-//		globals.svy_nav_showLookupWindow(event, '_tipoCert', 'LEAF_Lkp_Certificati', 'AggiornaCertificati', 'FiltraCertificati', null, null, 'codicecertificato', true)
-//	
-//	}
-//	
-//	return true
-//}
-
-///**
-// * @param {String} tipoCert
-// * @param {Number} idEventoClasse
-// * 
-// * @properties={typeid:24,uuid:"C6BE8011-EC15-4056-A061-2AE05E849FEE"}
-// */
-//function AggiornaDescrCertificato(tipoCert, idEventoClasse){
-//	
-//	vTipoCertificato = tipoCert
-//	vDescrizioneCertificato = ''
-//	var _numrec = 0
-//	var _foundset = databaseManager.getFoundSet(globals.nav.program['LEAF_Lkp_Certificati'].server_name,
-//												globals.nav.program['LEAF_Lkp_Certificati'].table_name)
-//												
-//	_foundset.removeFoundSetFilterParam('ftr_tipoCertificato')											
-//	_foundset.removeFoundSetFilterParam('ftr_classeCertificato')
-//	_foundset.addFoundSetFilterParam('codcertificato', '=', vTipoCertificato,'ftr_tipoCertificato')
-//	_foundset.addFoundSetFilterParam('ideventoclasse', '=', idEventoClasse,'ftr_classeCertificato')
-//	_foundset.loadAllRecords()
-//	
-//	if (_foundset.getSize() == 1) {
-//		
-//		vTipoCertificato = _foundset['codcertificato']
-//		vDescrizioneCertificato = _foundset['descrizione']
-//		
-//		updateDettaglioCertificato(foundset.idstoricocertificato,undefined,-);
-//
-//		if(vNuovoCertificato)
-//			   globals.annotazioniControlloPropostaCampo('',-1);
-//		
-//	}
-//}
-
 /**
  * Costruisce la form di dettaglio del certificato, in base al tipo specificato.
  * 
@@ -490,8 +391,8 @@ function getFormDettaglioCertificato(formName, tipoCertificato, idEventoClasse)
 		}\
 	");
 	
-	tForm.onElementFocusGained = tForm.getMethod("globals.onFocusGained")
-	tForm.onElementFocusLost = tForm.getMethod("globals.onFocusLost");
+	tForm.onElementFocusGained = tForm.getMethod("globals.onFocusGainedCertificate")
+	tForm.onElementFocusLost = tForm.getMethod("globals.onFocusLostCertificate");
 	
 	var length = fsTipoCertificati.getSize();	
 	for (var i = 1; i <= length; i++) 
