@@ -435,9 +435,15 @@ function eliminaCertificato(params)
 function controllaValiditaCampi(params)
 {
 	var url = WS_URL + '/Validatore/ControlloValiditaCampi';
-	var response = globals.getWebServiceResponse(url,params);
+	var form = forms.storico_main.controller.getName();
+	var response = validate("", -1, url, false, -1, form);
+		
+	//la situazione post primo controllo è bloccante : salviamo il messaggio ritornato e ricostruiamo la form
+    var msg = response.message;
+    forms[forms.storico_main.controller.getName()].vErrorMessage = msg; //visualizziamo il messaggio precedente nell'area riservata alle comunicazioni di errore
+    msg != '' ?	forms[forms.storico_main.controller.getName()].elements.btn_salva_cert.enabled = false : forms[forms.storico_main.controller.getName()].elements.btn_salva_cert.enabled = true;
 	
-	return response;
+	return response.message == "";
 }
 
 /**
@@ -554,9 +560,12 @@ function onFocusGainedLost(oldValue, newValue, event)
 	                  AND CodiceCertificato = ? AND applicasu = ?";
 	var arrInfoEL = [forms.storico_main.vIdEventoClasse, forms.storico_main.vCodiceCertificato, currElemName];
 	var dsInfoEL = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, sqlInfoEL, arrInfoEL, -1);
-	if (dsInfoEL.getMaxRowIndex()) {
+	if (dsInfoEL.getMaxRowIndex()) 
+	{
+		// controlla validità campi certificato
+		returnVal = globals.controllaValiditaCampi(null);
 		// annotazioni
-		globals.annotazioni(currElemName, forms[frmName]['idstoricocertificato']);
+		returnVal = globals.annotazioni(currElemName, forms[frmName]['idstoricocertificato']);
 	    // Ticket 16933
 		// controllo uscita
 		returnVal = globals.controlloCampo(currElemName, forms[frmName]['idstoricocertificato']);
@@ -564,18 +573,19 @@ function onFocusGainedLost(oldValue, newValue, event)
 		if(!returnVal)
 	       return returnVal;	
 	}
+	
+	// proposta campi successivi non ancora compilati
 	var arrSeqElems = forms[frmName].controller.getTabSequence();
 	var nextElemSeqIndex = arrSeqElems.indexOf(currElemName) != -1 && arrSeqElems.indexOf(currElemName) + 1 != arrSeqElems.length ? arrSeqElems.indexOf(currElemName) + 1 : null;
 	if (nextElemSeqIndex) {
 		var nextElemName = arrSeqElems[nextElemSeqIndex];
 		arrInfoEL = [forms.storico_main.vIdEventoClasse, forms.storico_main.vCodiceCertificato, nextElemName];
 		dsInfoEL = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, sqlInfoEL, arrInfoEL, -1);
-		if (dsInfoEL.getValue(1, 2) == 0)
+		if (dsInfoEL.getValue(1, 2) == 1)
 			returnVal = globals.propostaCampo(nextElemName, forms[frmName]['idstoricocertificato'], mainFormName);
 	}
 	
-	return returnVal;
-	
+	return returnVal;	
 }
 
 /**

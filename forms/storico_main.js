@@ -289,58 +289,56 @@ function confermaGestioneCertificato(tipoGiornaliera)
 	
 	// verifichiamo la validità dei valori immessi : se non validi segnaliamo a video
 	var response = globals.controllaValiditaCampi(params);
-	if (response['success']) 
+	if (response) 
 	{	
-		if(response.returnValue) 
-		{
-			vChiuso = response['chiuso'];
-						
-			var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
+		vChiuso = response['chiuso'];
+					
+		var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
 
-			params   = inizializzaParametriValidatore('', idStoricoCertificato);
-			
-			// controlla eventuale ricaduta infortunio
-			if(params.idEventoClasse === globals.EventoClasse.INFORTUNIO)
-			{
-				var ricaduta = globals.controlloRicaduta(params);
-				var answer = false;
-				if(ricaduta && response['message'])
-					answer = globals.ma_utl_showYesNoQuestion(response['message'], 'Informazioni certificato');
-			}
-			response = globals.validaCertificato(params, answer, vIdStoricoDatiAggiuntivi);
-			
-			var newIdStoricoCertificato = response;
-			if (newIdStoricoCertificato && newIdStoricoCertificato != -1) 
-			{
-				vElencoGiorniRicalcolo = response['elencogiorniricalcolo'];
-					
-				/** @type {JSFoundSet<db:/ma_presenze/storico_certificatidettaglio>} */
-				var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_CERTIFICATI_DETTAGLIO);
-			    if (fs && fs.find())
-			    {
-			    	fs.idstoricocertificato = newIdStoricoCertificato;
-			    	fs.search();
-			    	
-			    	databaseManager.refreshRecordFromDatabase(fs,-1);
-			    }
-			    
-				inizializzaRiepilogo(newIdStoricoCertificato);
-				exitEditMode();
-				
-				// prova per gestione certificati DI/CM che rimangono in edit...
-				if (forms[vFormDettaglioCertificato])
-					globals.ma_utl_setStatus(globals.Status.BROWSE,vFormDettaglioCertificato);
-					
-			}
-			else 
-			if (newIdStoricoCertificato == 0)
-			{
-				globals.ma_utl_showErrorDialog('Costruzione riepilogo certificati non riuscita, riprovare', 'Conferma certificati')
-				exitEditMode();
-			} 
-			else
-				globals.ma_utl_showErrorDialog('Errore durante il salvataggio del certificato, controllare che non ne sia presente uno avente gli stessi parametri tra quelli esistenti', 'Conferma certificati');
+		params   = inizializzaParametriValidatore('', idStoricoCertificato);
+		
+		// controlla eventuale ricaduta infortunio
+		if(params.idEventoClasse === globals.EventoClasse.INFORTUNIO)
+		{
+			var ricaduta = globals.controlloRicaduta(params);
+			var answer = false;
+			if(ricaduta && response['message'])
+				answer = globals.ma_utl_showYesNoQuestion(response['message'], 'Informazioni certificato');
 		}
+		response = globals.validaCertificato(params, answer, vIdStoricoDatiAggiuntivi);
+		
+		var newIdStoricoCertificato = response;
+		if (newIdStoricoCertificato && newIdStoricoCertificato != -1) 
+		{
+			vElencoGiorniRicalcolo = response['elencogiorniricalcolo'];
+				
+			/** @type {JSFoundSet<db:/ma_presenze/storico_certificatidettaglio>} */
+			var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_CERTIFICATI_DETTAGLIO);
+		    if (fs && fs.find())
+		    {
+		    	fs.idstoricocertificato = newIdStoricoCertificato;
+		    	fs.search();
+		    	
+		    	databaseManager.refreshRecordFromDatabase(fs,-1);
+		    }
+		    
+			inizializzaRiepilogo(newIdStoricoCertificato);
+			exitEditMode();
+			
+			// prova per gestione certificati DI/CM che rimangono in edit...
+			if (forms[vFormDettaglioCertificato])
+				globals.ma_utl_setStatus(globals.Status.BROWSE,vFormDettaglioCertificato);
+				
+		}
+		else 
+		if (newIdStoricoCertificato == 0)
+		{
+			globals.ma_utl_showErrorDialog('Costruzione riepilogo certificati non riuscita, riprovare', 'Conferma certificati')
+			exitEditMode();
+		} 
+		else
+			globals.ma_utl_showErrorDialog('Errore durante il salvataggio del certificato, controllare che non ne sia presente uno avente gli stessi parametri tra quelli esistenti', 'Conferma certificati');
+		
 	} 
 	else
 		globals.ma_utl_showWarningDialog(response['message'], 'Conferma certificati');
