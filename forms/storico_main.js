@@ -295,6 +295,10 @@ function confermaGestioneCertificato(tipoGiornaliera)
 		vChiuso = response.Chiuso;
 					
 		var answer = false;
+
+		
+		var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
+
 		// controlla eventuale ricaduta infortunio
 		if(params.ideventoclasse === globals.EventoClasse.INFORTUNIO)
 		{
@@ -303,15 +307,13 @@ function confermaGestioneCertificato(tipoGiornaliera)
 				answer = globals.ma_utl_showYesNoQuestion(ricaduta.ReturnValue.toString(), 'Informazioni certificato');
 		}
 		
-		var idStoricoCertificato = vNuovoCertificato ? -1 : getFormRiepilogo().foundset['idstorico'];
-
 		params   = inizializzaParametriValidatore('', idStoricoCertificato);
 		response = globals.validaCertificato(params, answer, vIdStoricoDatiAggiuntivi);
 		
 		var newIdStoricoCertificato = response.IdStorico;
 		if (newIdStoricoCertificato && newIdStoricoCertificato != -1) 
 		{
-			vElencoGiorniRicalcolo = response.ElencoGiorniRicalcolo;
+			//vElencoGiorniRicalcolo = response.ElencoGiorniRicalcolo;
 				
 			/** @type {JSFoundSet<db:/ma_presenze/storico_certificatidettaglio>} */
 			var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.STORICO_CERTIFICATI_DETTAGLIO);
@@ -571,7 +573,7 @@ function inizializzaRiepilogo(idStoricoPadre, addCertificato)
 	if(idStoricoPadre)
 	{
 		// Se è presente un padre, costruisci la form di riepilogo
-		var url =  globals.WS_CERTIFICATE + "/Certificate32/CostruisciRiepilogo";
+		var url =  globals.WS_CERTIFICATE + "/Certificate32/BuildSummary";
 		strutturaRiepilogo =
 		{
 			userid          :   security.getUserName(), 
