@@ -211,7 +211,7 @@ function annotazioni(codiceCampo, idStorico, form)
 {
 	form = form || forms.storico_main.controller.getName();
 	// Gestisci le annotazioni
-	var url = WS_CERTIFICATE + '/Validator32/Annotazioni';	
+	var url = WS_CERTIFICATE + '/Validator32/Annotations';	
 	var response = validate(codiceCampo, idStorico, url, false, -1, form);	
 	if(response && response.StatusCode == HTTPStatusCode.OK)
 		forms[form].vAnnotazioni = response.Annotazioni;
@@ -230,7 +230,7 @@ function controlloCampo(codiceCampo, idStorico, form)
 	form = form || forms.storico_main.controller.getName();
 	
 	// Gestisci il controllo del campo
-	var url = WS_CERTIFICATE + '/Validator32/Controllo';	
+	var url = WS_CERTIFICATE + '/Validator32/Control';	
 	var response = validate(codiceCampo, idStorico, url, false, forms[form].vIdStoricoDatiAggiuntivi, form);	
 	if(response && response.StatusCode == HTTPStatusCode.OK)
 	{
@@ -256,7 +256,7 @@ function propostaCampo(codiceCampo,idStorico, form)
 {
 	form = form || forms.storico_main.controller.getName();
 	
-	var url = WS_CERTIFICATE + '/Validator32/Proposta';
+	var url = WS_CERTIFICATE + '/Validator32/Proposal';
 	var response = validate(codiceCampo, idStorico, url, false, forms[form].vIdStoricoDatiAggiuntivi, form);
 	if(response && response.StatusCode === HTTPStatusCode.OK)
 	{
@@ -278,7 +278,7 @@ function propostaCampo(codiceCampo,idStorico, form)
 function annotazioniControlloPropostaCampo(codiceCampo, idStorico, form)
 {
 	// Gestisci il primo controllo del campo ed eventuali proposte
-	var url = WS_CERTIFICATE + '/Validator32/ControlloProposta';
+	var url = WS_CERTIFICATE + '/Validator32/ControlProposal';
 	var response = validate(codiceCampo, idStorico, url, false, forms[form].vIdStoricoDatiAggiuntivi, form);
 	if(response && response.StatusCode == HTTPStatusCode.OK)
 	{
@@ -308,7 +308,7 @@ function annotazioniControlloPropostaCampo(codiceCampo, idStorico, form)
 function controlloRicaduta(params){
 	
 	// Gestisci la validazione completa del certificato
-	var url = WS_CERTIFICATE + '/Validator32/ValidaRicaduta';	
+	var url = WS_CERTIFICATE + '/Validator32/ValidateRelapse';	
 	
 	return getWebServiceResponse(url,params);
 }
@@ -349,7 +349,7 @@ function formatNullDate(formArray)
 function validaCertificato(params, isRicaduta, idStoricoDatiAggiuntivi)
 {
 	// Gestisci la validazione completa del certificato
-	var url = WS_CERTIFICATE + '/Validator32/ValidaCertificato';
+	var url = WS_CERTIFICATE + '/Validator32/ValidateCertificate';
 
 	var response = validateCertificate(url, params, isRicaduta, idStoricoDatiAggiuntivi);	
 //	if (response.ReturnValue === true && response.StatusCode === HTTPStatusCode.OK)
@@ -396,7 +396,7 @@ function validate(codiceCampo, idStoricoCertificato, url, isRicaduta, idStoricoD
 function validaTipoCertificato(params)
 {
 	// Gestisci la validazione completa del certificato
-	var url = WS_CERTIFICATE + '/Validator32/ValidaTipoCertificato';	
+	var url = WS_CERTIFICATE + '/Validator32/ValidateCertificateType';	
 	var response = getWebServiceResponse(url, params);	
 	if (response.Message !== '')
 	{
@@ -417,7 +417,7 @@ function validaTipoCertificato(params)
 function eliminaCertificato(params)
 {
 	// Gestisci l'eliminazione del certificato
-	var url = WS_CERTIFICATE + '/Certificate32/EliminaCertificato';	
+	var url = WS_CERTIFICATE + '/Certificate32/DeleteCertificate';	
 	/** @type {{StatusCode : Number,
 			    Message : String,
 			    ReturnValue : Object,
@@ -436,7 +436,7 @@ function controllaValiditaCampi(form)
 {
 	form = form || forms.storico_main.controller.getName();
 	
-	var url = WS_CERTIFICATE + '/Validator32/ControlloCampi';
+	var url = WS_CERTIFICATE + '/Validator32/ControlFields';
 	var response = validate(null, -1, url, false, -1, form);	
 	if(response && response.StatusCode == HTTPStatusCode.OK)
 	{
@@ -726,7 +726,7 @@ function confermaCertificati(params, modificato)
 		params.operationid = operation.operationId;
 		params.operationhash = operation.operationHash;
 		
-		var url = WS_CERTIFICATE + '/Certificate32/ConfermaCertificati';
+		var url = WS_CERTIFICATE + '/Certificate32/ConfirmCertificate';
 		if(params.sync)
 	  	   return globals.getWebServiceResponse(url + 'Sync', params).ReturnValue;
 				
